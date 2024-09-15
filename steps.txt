@@ -1,0 +1,43 @@
+Requirements:
+1. modify_coverage_path.sh
+2. aggregate_coverage.py
+3. index.html
+
+Steps:
+1. Copy the coverage reports
+    cp -r /media/scratch.metropolis2/users/release_pipeline_files/coverage_reports/notebook_test .
+
+2. Clone the repositories
+    git clone ssh://git@gitlab-master.nvidia.com:12051/nvidia-tao-toolkit/tao-deploy.git
+    git clone ssh://git@gitlab-master.nvidia.com:12051/nvidia-tao-toolkit/tao-dataservices.git
+    git clone ssh://git@gitlab-master.nvidia.com:12051/nvidia-tao-toolkit/tao-tf2.git
+    git clone ssh://git@gitlab-master.nvidia.com:12051/nvidia-tao-toolkit/tao-pytorch.git
+
+    cp -r tao-deploy/nvidia_tao_deploy .
+    cp -r tao-dataservices/nvidia_tao_ds .
+    cp -r tao-tf2/nvidia_tao_tf2 .
+    cp -r tao-pytorch/nvidia_tao_pytorch .
+
+3. Combine the coverage reports
+    coverage combine notebook_test/.coverage.*
+
+4. Create a directory coverage_reports
+    ```sh
+    mkdir coverage_reports
+    sudo rm -rf coverage_reports/*
+    ```
+
+5. Modify the coverage paths
+    bash modify_coverage_path.sh .coverage /usr/local/lib/python3.10/dist-packages $(pwd)
+    bash modify_coverage_path.sh .coverage /usr/local/lib/python3.10/dist-packages $(pwd)
+    bash modify_coverage_path.sh .coverage /usr/local/lib/python3.10/dist-packages $(pwd)
+    bash modify_coverage_path.sh .coverage /usr/local/lib/python3.10/dist-packages $(pwd)
+
+6. Generate the html report
+   coverage html -i
+
+7. generate the aggregated coverage report
+   python3 aggregate_coverage.py
+
+8. Host the coverage reports
+    python3 -m http.server 8000 --bind 0.0.0.0
