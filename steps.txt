@@ -24,12 +24,9 @@ Steps:
 4. Create a directory coverage_reports
     ```sh
     mkdir coverage_reports
-    sudo rm -rf coverage_reports/*
     ```
 
 5. Modify the coverage paths
-    bash modify_coverage_path.sh .coverage /usr/local/lib/python3.10/dist-packages $(pwd)
-    bash modify_coverage_path.sh .coverage /usr/local/lib/python3.10/dist-packages $(pwd)
     bash modify_coverage_path.sh .coverage /usr/local/lib/python3.10/dist-packages $(pwd)
     bash modify_coverage_path.sh .coverage /usr/local/lib/python3.10/dist-packages $(pwd)
 
@@ -39,5 +36,13 @@ Steps:
 7. generate the aggregated coverage report
    python3 aggregate_coverage.py
 
-8. Host the coverage reports
-    python3 -m http.server 8000 --bind 0.0.0.0
+8. Copy the coverage reports to the hosting directory
+    cp -rf coverage_reports/ ~/code_coverage_hosting/
+    cp -rf htmlcov/ ~/code_coverage_hosting/
+    
+8. Host the coverage reports <Not needed>
+    sudo ufw allow 8012/tcp
+    sudo ufw reload
+    nohup python3 -m http.server 8012 --bind 0.0.0.0 &
+
+9. Browse at : http://10.111.61.69:8012/coverage_reports/aggregated_coverage_reports.html
